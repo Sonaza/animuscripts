@@ -20,7 +20,6 @@ output_folder = "output2"
 mkdir_p(output_folder)
 
 funishit_duration_ms = 10050
-funishit_duration_ms = 120050
 overwrite_files = True
 
 cbr_target = 19
@@ -43,7 +42,7 @@ for input_video in video_files:
 	
 	skip_funishit_flag = ''
 	if funishit_duration_ms > 0:
-		skip_funishit_flag = f'-ss {funishit_duration_ms:d}ms -to {funishit_duration_ms*2:d}ms'
+		skip_funishit_flag = f'-ss {funishit_duration_ms:d}ms'
 	
 	# video_flags = f'-c:v h264_nvenc -preset:v slow -profile:v high -level:v 4.0 -rc:v vbr -cq:v {cbr_target:d} -b:v {vbr_average_kbit:d}k -maxrate:v {vbr_maxrate_kbit}k -bf:v 3'
 	video_flags = f'-c:v hevc_nvenc -preset:v llhq -profile:v main10 -tier:v high -spatial_aq:v 1 -level:v 4.0 -rc:v vbr -cq:v {cbr_target:d} -b:v {vbr_average_kbit:d}k -maxrate:v {vbr_maxrate_kbit}k'
