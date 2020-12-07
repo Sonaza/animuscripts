@@ -1,0 +1,7 @@
+fonts/
+old/
+
+*.zip
+*.7z
+*.exe
+desktop.ini
