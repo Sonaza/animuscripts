@@ -13,7 +13,8 @@ text_codecs = {
 	"S_TEXT/ASCII": ".srt",
 }
 
-output_folder = "output"
+subs_output_folder = "subtitles"
+attachments_output_folder = "attachments"
 
 extract_attachments = True
 
@@ -98,12 +99,12 @@ for input_file in video_files:
 		subtitle_file_name = f"{file_name}{multitrack_identifier}{track_ext}"
 		# print(subtitle_file_name)
 		
-		track_flag = f"\"{track['id']}:{output_folder}/{subtitle_file_name}\""
+		track_flag = f"\"{track['id']}:{subs_output_folder}/{subtitle_file_name}\""
 		track_flags.append(track_flag)
 	
 	attachment_flags = []
 	for attachment in attachments:
-		attachment_flag = f"\"{attachment['id']}:{output_folder}/attachments/{attachment['file_name']}\""
+		attachment_flag = f"\"{attachment['id']}:{attachments_output_folder}/{attachment['file_name']}\""
 		attachment_flags.append(attachment_flag)
 	
 	track_command = "tracks " + ' '.join(track_flags)
