@@ -8,7 +8,7 @@ OVERWRITE_IMMEDIATELY = False
 ADD_FONTS = True
 COPY_ORIGINAL_ATTACHMENTS = False
 
-MODIFY_TRACKS = True
+MODIFY_TRACKS = False
 keep_audio_tracks = [2]
 keep_subtitle_tracks = []
 default_tracks = [2]

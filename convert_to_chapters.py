@@ -4,15 +4,17 @@ import math
 import errno
 import shutil
 import glob
+import platform
 
 def mkdir_p(path):
-    try:
-        os.makedirs(path)
-    except OSError as exc:  # Python ≥ 2.5
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else:
-            raise
+	try:
+		os.makedirs(path)
+	except OSError as exc:
+		import errno
+		if exc.errno == errno.EEXIST and os.path.isdir(path):
+			pass
+		else:
+			raise
 
 def format_chapter_time(input_seconds):
 	hours = math.floor(input_seconds / 3600)
@@ -79,6 +81,9 @@ print(f"Writing {len(chapters)} chapters to {output_file}...")
 
 with open(output_file, "wb") as f:
 	f.write('\n'.join(chapters_formatted).encode('utf-8'))
+
+if platform.system() == 'Windows':
+	os.startfile(output_file)
 
 if os.path.exists(bookmarks_file):
 	mkdir_p("bookmarks")
