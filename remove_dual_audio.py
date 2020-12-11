@@ -3,22 +3,35 @@ import glob
 import subprocess
 import shutil
 
+# Use per file exceptions to the dicts by specifying a file name as the key and adding a list of tracks for it
+keep_audio_tracks = {
+	'default' : [2],
+	'excepticon.mkv' : [2],
+}
+keep_subtitle_tracks = {
+	'default' : [3],
+	'excepticon.mkv' : [4],
+}
+default_tracks = {
+	'default' : [2, 3],
+	'excepticon.mkv' : [2, 4],
+}
+forced_tracks = {
+	'default' : [2],
+	'excepticon.mkv' : [2],
+}
+
 def comma_concat(list_items):
 	return ','.join([str(x) for x in list_items])
-	
-keep_audio_tracks = [2]
-keep_subtitle_tracks = [4]
-default_tracks = [2, 4]
-forced_tracks = [2]
+
+def get_track_list(file, track_list):
+	if file in track_list:
+		return track_list[file]
+	return track_list['default']
 
 video_files = glob.glob("*.mkv")
 
 output_folder = "output"
-
-keep_audio_tracks = [2]
-keep_subtitle_tracks = [4]
-default_tracks = [2, 4]
-forced_tracks = [2]
 
 fix_video_titles = False
 OVERWRITE_IMMEDIATELY = False
@@ -30,12 +43,12 @@ for input_video in video_files:
 	if fix_video_titles:
 		video_title = input_video.split('.')[0]
 		video_title_flag = f'--title "{video_title}"'
+		
+	audio_tracks_flag    = f'--audio-tracks {comma_concat(get_track_list(input_video, keep_audio_tracks))}'	
+	subtitle_tracks_flag = f'--subtitle-tracks {comma_concat(get_track_list(input_video, keep_subtitle_tracks))}'
 	
-	audio_tracks_flag    = f'--audio-tracks {comma_concat(keep_audio_tracks)}'
-	subtitle_tracks_flag = f'--subtitle-tracks {comma_concat(keep_subtitle_tracks)}'
-	
-	default_tracks_flag = ' '.join([f'--default-track {x}' for x in default_tracks])
-	forced_tracks_flag  = ' '.join([f'--forced-track {x}' for x in forced_tracks])
+	default_tracks_flag = ' '.join([f'--default-track {x}' for x in get_track_list(input_video, default_tracks)])
+	forced_tracks_flag  = ' '.join([f'--forced-track {x}' for x in get_track_list(input_video, forced_tracks)])
 	
 	command = f'mkvmerge -o "{output_name}" {video_title_flag} {audio_tracks_flag} {subtitle_tracks_flag} {default_tracks_flag} {forced_tracks_flag} "{input_video}"'
 	print(command)
