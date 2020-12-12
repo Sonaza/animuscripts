@@ -2,26 +2,27 @@ import os
 import glob
 import re
 
-def scan_recursively(base_path, include_folders):
+def scan_recursively(base_path):
 	allowed_ext = ['.mkv', '.mp4', '.ass']
-	result = []
+	result_files = []
+	result_folders = []
 	for root, subfolders, files in os.walk(base_path):
-		if include_folders:
-			for subfolder in subfolders:
-				result.append(os.path.relpath(os.path.join(root, subfolder), base_path))
+		for subfolder in subfolders:
+			result_folders.append(os.path.relpath(os.path.join(root, subfolder), base_path))
 		
 		for file in files:
 			newname, ext = os.path.splitext(file)
 			if not ext in allowed_ext:
 				continue
 			
-			result.append(os.path.relpath(os.path.join(root, file), base_path))
+			result_files.append(os.path.relpath(os.path.join(root, file), base_path))
 	
-	return result
+	return (result_files, result_folders)
 
-files = scan_recursively('.', True)
+files, folders = scan_recursively('.')
+# Append folders in reverse order at the end (prevent file not found errors when folders are renamed before files)
+files.extend(list(reversed(folders))) 
 
-# pattern = re.compile(r'(\[\w{1,8}\])')
 bracket_pattern = re.compile(r'([\[\(].*?[\]\)])')
 space_pattern   = re.compile(r'( {2,})')
 
@@ -31,7 +32,7 @@ for original_file in files:
 	root, file = os.path.split(original_file)
 	
 	if current_root != root:
-		print(f"Current folder: {root}/")
+		print(f"Current folder: {root}\\")
 		current_root = root
 	
 	newname, ext = os.path.splitext(file)
@@ -45,7 +46,10 @@ for original_file in files:
 	
 	newname = f'{newname.strip()}{ext}'
 	
-	dir_flag = '/ (dir)' if os.path.isdir(original_file) else ''
+	if (file == newname):
+		continue
+	
+	dir_flag = '\\ (dir)' if os.path.isdir(original_file) else ''
 	
 	if len(newname) == 0:
 		print(f'  {(file + dir_flag).ljust(100)}  =>  (invalid filename!)')
