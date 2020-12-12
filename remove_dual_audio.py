@@ -9,11 +9,11 @@ keep_audio_tracks = {
 	'excepticon.mkv' : [2],
 }
 keep_subtitle_tracks = {
-	'default' : [3],
+	'default' : [4],
 	'excepticon.mkv' : [4],
 }
 default_tracks = {
-	'default' : [2, 3],
+	'default' : [2, 4],
 	'excepticon.mkv' : [2, 4],
 }
 forced_tracks = {
@@ -38,6 +38,7 @@ OVERWRITE_IMMEDIATELY = False
 
 for input_video in video_files:		
 	output_name = f"{output_folder}/{input_video}"
+	if os.path.exists(output_name): continue
 	
 	video_title_flag = ""
 	if fix_video_titles:
