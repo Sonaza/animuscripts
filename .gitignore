@@ -1,7 +1,10 @@
 fonts/
 old/
+ffmpegdoc/
+copier/
 
 *.zip
 *.7z
 *.exe
 desktop.ini
+reencode.txt

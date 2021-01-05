@@ -1,6 +1,6 @@
 import os
 
-def convertNonAscii(inputString, replace=" "):
+def convertToAscii(inputString, replace=" "):
 	output = ""
 	for c in inputString:
 		if ord(c) < 128:
@@ -14,7 +14,7 @@ for root, subdirs, files in os.walk("."):
 	print(root)
 	for file in files:
 		originalPath = os.path.join(root, file)
-		newPath = os.path.join(root, convertNonAscii(file))
+		newPath = os.path.join(root, convertToAscii(file))
 		if (originalPath != newPath):
 			os.rename(originalPath, newPath)
 			print("  Renamed: ", originalPath, " -> ", newPath)

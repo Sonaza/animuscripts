@@ -101,7 +101,11 @@ def parse_style_color(hex_color):
 	r = int(hex_color[8:10], 16)
 	return (r, g, b, a)
 	
-def format_style_color(r, g, b, a):
+def format_hex_color(hex, alpha = 0):
+	return f'&H{alpha:02X}{hex[4:6]}{hex[2:4]}{hex[0:2]}'.upper()
+	
+def format_style_color(r, g, b, a, alphaoverride = None):
+	if alphaoverride != None: a = alphaoverride
 	return f'&H{a:02X}{b:02X}{g:02X}{r:02X}'
 	
 def adjust_brightness(multiplier, r, g, b, a):
@@ -114,7 +118,7 @@ output_folder = ''
 if output_folder:
 	mkdir_p(output_folder)
 
-subs_files = glob.glob("subs/*.ass")
+subs_files = glob.glob("subtitles/*.ass")
 
 for input_file in subs_files:
 	subs_data = load_file(input_file)
@@ -132,12 +136,23 @@ for input_file in subs_files:
 			output_data.append(line)
 			continue
 		
-		if 'Love Asteroid' in fields['Name']:
-			fields['Shadow'] = 2
-			fields['Outline'] = 2
+		if fields['Name'] == "Default":
+			continue
+		
+		fields['Fontname'] = 'FOT-TsukuARdGothic Std E - EN'
+		
+		if 'Main' in fields['Name'] or 'Italics' in fields['Name'] or 'Flashback' in fields['Name']:
+			fields['Shadow'] = 1
+			fields['Outline'] = 1
 			
-			fields['OutlineColour'] = '&H00922915'
-			fields['BackColour']    = '&H55922915'
+			if 'Flashback' in fields['Name']:
+				fields['PrimaryColour'] = format_hex_color('edf2f8')
+				fields['OutlineColour'] = format_hex_color('595a71')
+				fields['BackColour']    = format_hex_color('25263a', 90)
+			else:
+				fields['PrimaryColour'] = format_hex_color('edf2f8')
+				fields['OutlineColour'] = format_hex_color('36377b')
+				fields['BackColour']    = format_hex_color('080a43', 90)
 		else:
 			colorRGBA = parse_style_color(fields['PrimaryColour'])
 			luminance = rgb_luminance(*colorRGBA)
@@ -154,11 +169,14 @@ for input_file in subs_files:
 			elif luminance > 0.35:
 				outlineColor = adjust_brightness(0.6, *outlineColor)
 			
-			fields['PrimaryColour'] = format_style_color(*primaryColor)
+			# fields['PrimaryColour'] = format_style_color(*primaryColor)
 			fields['OutlineColour'] = format_style_color(*outlineColor)
+			fields['BackColour'] = format_style_color(*outlineColor, 150)
+			
+			fields['Fontsize'] = max(10, int(fields['Fontsize']))
 			
 			fields['Shadow'] = 1
-			fields['Outline'] = 2 #2 if int(fields['Outline']) > 1 else 0
+			fields['Outline'] = 1
 		
 		try:
 			formatted = reformat_style_line(fields)

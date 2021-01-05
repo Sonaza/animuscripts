@@ -2,6 +2,16 @@ import os
 import glob
 import re
 
+def convertToAscii(inputString, replace=" "):
+	output = ""
+	for c in inputString:
+		if ord(c) < 128:
+			output += c
+		else:
+			output += replace
+	
+	return output
+
 files = []
 glob_strings = ["*.mkv", "*.ass"]
 for glob_str in glob_strings:
@@ -14,14 +24,19 @@ pattern = re.compile(r'([\[\(].*?[\]\)])')
 
 for file in files:
 	# newname = file
-	newname, ext = os.path.splitext(file)
+	if not os.path.isdir(file):
+		newname, ext = os.path.splitext(file)
+	else:
+		newname = file
+		ext = ''
 	
 	newname = pattern.sub('', newname)
+	
+	newname = newname.replace("", "")
+	newname = newname.replace("", "")
+	newname = newname.replace("", "")
+	
 	newname = f'{newname.strip()}{ext}'
-	newname = newname.replace("", "")
-	newname = newname.replace("", "")
-	newname = newname.replace("", "")
 	
-	
-	print(file, "=>", newname)
-	if (file != newname): os.rename(file, newname)
+	print(f'  {(file).ljust(100)}  =>  {newname}')
+	# if (file != newname): os.rename(file, newname)

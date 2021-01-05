@@ -2,6 +2,16 @@ import os
 import glob
 import re
 
+def convertToAscii(inputString, replace=" "):
+	output = ""
+	for c in inputString:
+		if ord(c) < 128:
+			output += c
+		else:
+			output += replace
+	
+	return output
+
 def scan_recursively(base_path):
 	allowed_ext = ['.mkv', '.mp4', '.ass']
 	result_files = []
@@ -35,7 +45,14 @@ for original_file in files:
 		print(f"Current folder: {root}\\")
 		current_root = root
 	
-	newname, ext = os.path.splitext(file)
+	if not os.path.isdir(file):
+		newname, ext = os.path.splitext(file)
+	else:
+		newname = file
+		ext = ''
+	
+	# newname = convertToAscii(newname)
+	newname = newname.replace('_', ' ')
 	
 	newname = bracket_pattern.sub('', newname)
 	newname = space_pattern.sub(' ', newname)
@@ -63,7 +80,7 @@ for original_file in files:
 	print(f'  {(file + dir_flag).ljust(100)}  =>  {newname}')
 	
 	try:
-		if (file != newname): os.rename(original_file, os.path.join(root, newname))
+		# if (file != newname): os.rename(original_file, os.path.join(root, newname))
 		pass
 		
 	except FileExistsError as e:
