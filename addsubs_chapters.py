@@ -37,7 +37,7 @@ for input_video, input_subs in video_subs_map:
 	
 	subs_flags = f'--language "0:{add_subs_language[0]}" --track-name "0:{add_subs_language[1]}" --default-track 0:1 "{input_subs}"'
 	
-	command = f'{'mkvmerge'} -o "{output_name}" -S "{input_video}" {subs_flags} {fonts_flags} {chapters_flag}'
+	command = f'{mkvmerge} -o "{output_name}" -S "{input_video}" {subs_flags} {fonts_flags} {chapters_flag}'
 	print(command)
 	subprocess.call(command, shell=True)
 	
