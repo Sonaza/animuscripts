@@ -2,6 +2,9 @@ import os
 import glob
 import subprocess
 
+def pp(program_name): return os.path.join('F:\\Animu\\_Tools', program_name)
+mkvmerge   = pp('mkvmerge')
+
 FIX_VIDEO_TITLES = False
 OVERWRITE_IMMEDIATELY = False
 
@@ -9,10 +12,30 @@ ADD_FONTS = True
 COPY_ORIGINAL_ATTACHMENTS = False
 
 MODIFY_TRACKS = False
-keep_audio_tracks = [2]
-keep_subtitle_tracks = []
-default_tracks = [2]
-forced_tracks = [2]
+try:
+	from sifted_tracks import *
+	print("Imported sifted_tracks.py\n")
+	
+except ImportError:
+	print("Using defaults (sifted_tracks.py import failed)\n")
+	
+	# Use per file exceptions to the dicts by specifying a file name as the key and adding a list of tracks for it
+	keep_audio_tracks = {
+		'default' : [2],
+		'excepticon.mkv' : [2],
+	}
+	keep_subtitle_tracks = {
+		'default' : [4],
+		'excepticon.mkv' : [4],
+	}
+	default_tracks = {
+		'default' : [2, 4],
+		'excepticon.mkv' : [2, 4],
+	}
+	forced_tracks = {
+		'default' : [2],
+		'excepticon.mkv' : [2],
+	}
 
 #----------------------------------------------------------
 
@@ -23,8 +46,8 @@ video_files = glob.glob("*.mkv")
 subs_files = glob.glob("*.ass")
 video_subs_map = list(zip(video_files, subs_files))
 
-fonts = glob.glob('fonts/*.ttf')
-fonts.extend(glob.glob('fonts/*.otf'))
+fonts = glob.glob('attachments/*.ttf')
+fonts.extend(glob.glob('attachments/*.otf'))
 font_mimes = dict(
 	ttf = 'application/x-truetype-font',
 	otf = 'application/x-font-opentype'
@@ -86,7 +109,7 @@ for input_video, input_subs in video_subs_map:
 	input_flags = f'{video_title_flag} {audio_tracks_flag} {subtitle_tracks_flag} {default_tracks_flag} {forced_tracks_flag} {attachments_copy_flag}'
 	addition_flags = f'{subs_flags} {fonts_flags} {chapters_flag}'
 	
-	command = f'mkvmerge -o "{output_name}" {input_flags} "{input_video}" {addition_flags}'
+	command = f'{mkvmerge} -o "{output_name}" {input_flags} "{input_video}" {addition_flags}'
 	print(command)
 	subprocess.call(command, shell=True)
 	

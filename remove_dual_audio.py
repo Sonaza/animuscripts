@@ -3,23 +3,33 @@ import glob
 import subprocess
 import shutil
 
-# Use per file exceptions to the dicts by specifying a file name as the key and adding a list of tracks for it
-keep_audio_tracks = {
-	'default' : [2],
-	'excepticon.mkv' : [2],
-}
-keep_subtitle_tracks = {
-	'default' : [4],
-	'excepticon.mkv' : [4],
-}
-default_tracks = {
-	'default' : [2, 4],
-	'excepticon.mkv' : [2, 4],
-}
-forced_tracks = {
-	'default' : [2],
-	'excepticon.mkv' : [2],
-}
+def pp(program_name): return os.path.join('F:\\Animu\\_Tools', program_name)
+mkvmerge   = pp('mkvmerge')
+
+try:
+	from sifted_tracks import *
+	print("Imported sifted_tracks.py\n")
+	
+except ImportError:
+	print("Using defaults (sifted_tracks.py import failed)\n")
+	
+	# Use per file exceptions to the dicts by specifying a file name as the key and adding a list of tracks for it
+	keep_audio_tracks = {
+		'default' : [2],
+		'excepticon.mkv' : [2],
+	}
+	keep_subtitle_tracks = {
+		'default' : [4],
+		'excepticon.mkv' : [4],
+	}
+	default_tracks = {
+		'default' : [2, 4],
+		'excepticon.mkv' : [2, 4],
+	}
+	forced_tracks = {
+		'default' : [2],
+		'excepticon.mkv' : [2],
+	}
 
 def comma_concat(list_items):
 	return ','.join([str(x) for x in list_items])
@@ -51,7 +61,10 @@ for input_video in video_files:
 	default_tracks_flag = ' '.join([f'--default-track {x}' for x in get_track_list(input_video, default_tracks)])
 	forced_tracks_flag  = ' '.join([f'--forced-track {x}' for x in get_track_list(input_video, forced_tracks)])
 	
-	command = f'mkvmerge -o "{output_name}" {video_title_flag} {audio_tracks_flag} {subtitle_tracks_flag} {default_tracks_flag} {forced_tracks_flag} "{input_video}"'
+	kept_tracks = get_track_list(input_video, keep_audio_tracks) + get_track_list(input_video, keep_subtitle_tracks)
+	track_order = '--track-order ' + ','.join(['0:0'] + [f'0:{x}' for x in kept_tracks])
+	
+	command = f'{mkvmerge} -o "{output_name}" {video_title_flag} {audio_tracks_flag} {subtitle_tracks_flag} {default_tracks_flag} {forced_tracks_flag} {track_order} "{input_video}"'
 	print(command)
 	
 	subprocess.call(command, shell=True)

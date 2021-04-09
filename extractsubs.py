@@ -4,6 +4,10 @@ import subprocess
 import json
 import re
 
+def pp(program_name): return os.path.join('F:\\Animu\\_Tools', program_name)
+mkvmerge   = pp('mkvmerge')
+mkvextract = pp('mkvextract')
+
 video_files = glob.glob("*.mkv")
 
 text_codecs = {
@@ -37,7 +41,7 @@ def find_extractable_tracks(file_path):
 		print("File does not exist:", file_path)
 		return ([], [])
 	
-	command = ['mkvmerge', '-i', '-F', 'json', file_path]
+	command = [mkvmerge, '-i', '-F', 'json', file_path]
 	output = subprocess.check_output(command, stderr=subprocess.STDOUT).decode("utf-8")
 	
 	try:
@@ -110,7 +114,7 @@ for input_file in video_files:
 	track_command = "tracks " + ' '.join(track_flags)
 	attachment_command = "attachments " + ' '.join(attachment_flags)
 	
-	command = f'mkvextract "{input_file}" {track_command}'
+	command = f'{mkvextract} "{input_file}" {track_command}'
 	if extract_attachments:
 		command = f'{command} {attachment_command}'
 	

@@ -2,6 +2,9 @@ import os
 import glob
 import subprocess
 
+def pp(program_name): return os.path.join('F:\\Animu\\_Tools', program_name)
+mkvmerge   = pp('mkvmerge')
+
 video_files = glob.glob("*.mkv")
 subs_files = glob.glob("*.ass")
 video_subs_map = list(zip(video_files, subs_files))
@@ -27,7 +30,7 @@ for input_video, input_subs in video_subs_map:
 	
 	subs_flags = f'--language "0:{add_subs_language[0]}" --track-name "0:{add_subs_language[1]}" --default-track 0:1 "{input_subs}"'
 	
-	command = f'mkvmerge -o "{output_name}" -S "{input_video}" {subs_flags} {fonts_flags}'
+	command = f'{mkvmerge} -o "{output_name}" -S "{input_video}" {subs_flags} {fonts_flags}'
 	print(command)
 	subprocess.call(command, shell=True)
 	
