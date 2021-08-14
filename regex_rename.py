@@ -11,24 +11,33 @@ def convertToAscii(inputString, replace=" "):
 			output += replace
 	
 	return output
+	
+def scan(base_path):
+	allowed_ext = ['.mkv', '.mp4', '.ass']
+	result_files = []
+	result_folders = []
+	for root, subfolders, files in os.walk(base_path):
+		for subfolder in subfolders:
+			result_folders.append(os.path.relpath(os.path.join(root, subfolder), base_path))
+		
+		for file in files:
+			newname, ext = os.path.splitext(file)
+			if not ext in allowed_ext:
+				continue
+			
+			result_files.append(os.path.relpath(os.path.join(root, file), base_path))
+		
+		return (result_files, result_folders)
+	
 
-files = []
-glob_strings = ["*.mkv", "*.ass"]
-for glob_str in glob_strings:
-	files.extend(glob.glob(glob_str))
-
-files.extend([x for x in os.listdir('.') if os.path.isdir(x)])
+files, folders = scan('.')
+files = sorted(files)
 
 pattern = re.compile(r'(\[\w{1,8}\])')
 pattern = re.compile(r'([\[\(].*?[\]\)])')
 
 for file in files:
-	# newname = file
-	if not os.path.isdir(file):
-		newname, ext = os.path.splitext(file)
-	else:
-		newname = file
-		ext = ''
+	newname, ext = os.path.splitext(file)
 	
 	newname = pattern.sub('', newname)
 	
