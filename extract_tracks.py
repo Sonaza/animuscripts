@@ -21,7 +21,7 @@ subtitles_output_root = "subtitles"
 attachments_output_root = "attachments"
 
 EXTRACT_ATTACHMENTS = True
-EXTRACT_ATTACHMENTS_TO_INDIVIDUAL_FOLDERS = True
+EXTRACT_ATTACHMENTS_TO_INDIVIDUAL_FOLDERS = False
 
 EXTRACT_CHAPTERS = False
 
